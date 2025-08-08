@@ -8,8 +8,9 @@ async function bootstrap() {
   const logger = new Logger('Bootstrap');
   app.setGlobalPrefix('api/v1');
 
+  // TODO: Enable CORS with .env configuration
   app.enableCors({
-    origin: ['http://localhost:4200'],
+    origin: ['https://facturpro.herokuapp.com'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'api-key'],
   });
