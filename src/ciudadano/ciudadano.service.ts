@@ -23,8 +23,12 @@ export class CiudadanoService {
       const response = await axios.get(
         `https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/ConsolidadoContribuyente/obtenerPorNumerosRuc?&ruc=${id}`,
       );
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
-      return response.data[0];
+      const responseAddress = await axios.get(
+        `https://srienlinea.sri.gob.ec/sri-catastro-sujeto-servicio-internet/rest/Establecimiento/consultarPorNumeroRuc?numeroRuc=${id}`,
+      );
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment
+      return { data: response.data[0], address: responseAddress.data[0] };
     } catch (error: any) {
       return `${error}`;
     }
