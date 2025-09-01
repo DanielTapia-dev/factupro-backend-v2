@@ -1,8 +1,9 @@
-version: '3'
+version: '3.9'
 
 services:
   db:
     image: postgres:14.3
+    container_name: factuPro
     restart: always
     ports:
       - '5432:5432'
@@ -10,6 +11,22 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_DB: ${DB_NAME}
-    container_name: factuPro
     volumes:
       - ./postgres:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: facturpro-api
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      # Asegura que la app use el servicio "db" del compose
+      DB_HOST: db
+      DB_PORT: 5432
+    ports:
+      - '3000:3000'
+    depends_on:
+      - db
