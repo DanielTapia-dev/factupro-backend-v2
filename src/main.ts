@@ -6,13 +6,15 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const logger = new Logger('Bootstrap');
+
+  // Todas las rutas bajo /api/v1/*
   app.setGlobalPrefix('api/v1');
 
-  // TODO: Enable CORS with .env configuration
+  // CORS: SOLO Heroku
   app.enableCors({
-    origin: ['https://facturpro.herokuapp.com'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'api-key'],
+    origin: 'https://facturpro.herokuapp.com',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'api-key'],
   });
 
   app.useGlobalPipes(
@@ -29,9 +31,11 @@ async function bootstrap() {
     .build();
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory);
+  // Swagger quedará en /api/v1/docs
+  SwaggerModule.setup('api/v1/docs', app, documentFactory);
 
-  await app.listen(process.env.PORT ?? 3000);
-  logger.log(`App running on port ${process.env.PORT}`);
+  const port = Number(process.env.PORT) || 3000;
+  await app.listen(port, '0.0.0.0');
+  logger.log(`API on http://0.0.0.0:${port}/api/v1`);
 }
 bootstrap();
