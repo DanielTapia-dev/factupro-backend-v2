@@ -3,30 +3,33 @@ version: '3.9'
 services:
   db:
     image: postgres:14.3
-    container_name: factuPro
+    container_name: ${DB_CONTAINER_NAME:-factuPro}
+    profiles:
+      - database
     restart: always
     ports:
-      - '5432:5432'
+      - '${DB_PORT:-5432}:5432'
     environment:
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-facturpro}
+      POSTGRES_USER: ${DB_USERNAME:-facturpro}
+      POSTGRES_DB: ${DB_NAME:-facturpro}
     volumes:
-      - ./postgres:/var/lib/postgresql/data
+      - ${DB_DATA_PATH:-./postgres}:/var/lib/postgresql/data
 
   api:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: facturpro-api
+    container_name: ${API_CONTAINER_NAME:-facturpro-api}
     restart: unless-stopped
     env_file:
       - .env
     environment:
       # Asegura que la app use el servicio "db" del compose
+      CORS_ORIGIN: ${CORS_ORIGIN:-*}
       DB_HOST: db
       DB_PORT: 5432
+      DB_ENABLED: ${DB_ENABLED:-false}
+      DB_MIGRATIONS_RUN: ${DB_MIGRATIONS_RUN:-false}
     ports:
-      - '3000:3000'
-    depends_on:
-      - db
+      - '${PORT:-3000}:${PORT:-3000}'

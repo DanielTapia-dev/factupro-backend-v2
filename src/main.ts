@@ -10,9 +10,13 @@ async function bootstrap() {
   // Todas las rutas bajo /api/v1/*
   app.setGlobalPrefix('api/v1');
 
-  // CORS: SOLO Heroku
+  const corsOrigin = process.env.CORS_ORIGIN ?? 'https://facturpro.herokuapp.com';
+  const origin = corsOrigin.includes(',')
+    ? corsOrigin.split(',').map((value) => value.trim())
+    : corsOrigin;
+
   app.enableCors({
-    origin: 'https://facturpro.herokuapp.com',
+    origin,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization', 'api-key'],
   });
