@@ -76,11 +76,6 @@ jobs:
           node --version
           pm2 --version
 
-          if pm2 describe facturpro-api-staging > /dev/null; then
-            pm2 restart facturpro-api-staging --update-env
-          else
-            pm2 start ecosystem.config.cjs --update-env
-          fi
-
+          pm2 startOrReload ecosystem.config.cjs --update-env
           pm2 save
           EOF
