@@ -278,3 +278,14 @@ pm2 --version
 nginx -v
 rsync --version
 ```
+
+Si Node.js fue instalado con `nvm`, el pipeline carga `~/.nvm/nvm.sh` antes de
+ejecutar `npm`. Para validar lo mismo manualmente en la instancia:
+
+```
+source ~/.nvm/nvm.sh
+nvm use 20
+node --version
+npm --version
+pm2 --version
+```

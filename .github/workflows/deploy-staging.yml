@@ -62,6 +62,19 @@ jobs:
           set -e
           cd "${{ secrets.STAGING_PATH }}"
 
+          if [ -s "$HOME/.nvm/nvm.sh" ]; then
+            . "$HOME/.nvm/nvm.sh"
+            nvm use 20 >/dev/null 2>&1 || nvm use --lts >/dev/null 2>&1 || nvm use node >/dev/null 2>&1
+          fi
+
+          command -v node >/dev/null || { echo "node is not available in PATH"; exit 1; }
+          command -v npm >/dev/null || { echo "npm is not available in PATH"; exit 1; }
+          command -v pm2 >/dev/null || { echo "pm2 is not available in PATH"; exit 1; }
+
+          node --version
+          npm --version
+          pm2 --version
+
           npm ci
           npm run build
           npm prune --omit=dev
