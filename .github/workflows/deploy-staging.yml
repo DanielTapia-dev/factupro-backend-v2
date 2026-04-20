@@ -51,11 +51,11 @@ jobs:
         run: |
           rsync -az --delete \
             -e "ssh -i ~/.ssh/staging_key" \
-            --exclude ".git" \
-            --exclude ".github" \
-            --exclude ".env" \
-            --exclude "coverage" \
-            --exclude "postgres" \
+            --exclude "/.git/" \
+            --exclude "/.github/" \
+            --exclude "/.env" \
+            --exclude "/coverage/" \
+            --exclude "/postgres/" \
             ./ "${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }}:${{ secrets.STAGING_PATH }}/"
 
       - name: Restart PM2 app

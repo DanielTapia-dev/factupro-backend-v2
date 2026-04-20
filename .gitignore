@@ -47,6 +47,15 @@ lerna-debug.log*
 .env.production.local
 .env.local
 
+# SSH keys and deploy credentials
+github-actions-*
+*.pem
+*.ppk
+*.key
+*.pub
+id_rsa*
+id_ed25519*
+
 # temp directory
 .temp
 .tmp
