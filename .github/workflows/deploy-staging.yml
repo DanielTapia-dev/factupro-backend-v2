@@ -29,6 +29,11 @@ jobs:
       - name: Test
         run: npm test -- --runInBand
 
+      - name: Prepare production dependencies
+        run: |
+          rm -rf node_modules
+          npm ci --omit=dev --no-audit --no-fund
+
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh
@@ -49,8 +54,6 @@ jobs:
             --exclude ".git" \
             --exclude ".github" \
             --exclude ".env" \
-            --exclude "node_modules" \
-            --exclude "dist" \
             --exclude "coverage" \
             --exclude "postgres" \
             ./ "${{ secrets.STAGING_USER }}@${{ secrets.STAGING_HOST }}:${{ secrets.STAGING_PATH }}/"
@@ -68,16 +71,10 @@ jobs:
           fi
 
           command -v node >/dev/null || { echo "node is not available in PATH"; exit 1; }
-          command -v npm >/dev/null || { echo "npm is not available in PATH"; exit 1; }
           command -v pm2 >/dev/null || { echo "pm2 is not available in PATH"; exit 1; }
 
           node --version
-          npm --version
           pm2 --version
-
-          npm ci
-          npm run build
-          npm prune --omit=dev
 
           if pm2 describe facturpro-api-staging > /dev/null; then
             pm2 restart facturpro-api-staging --update-env

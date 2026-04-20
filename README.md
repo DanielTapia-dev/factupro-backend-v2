@@ -264,10 +264,13 @@ El pipeline hace:
 1. Instala dependencias en GitHub Actions.
 2. Compila el proyecto.
 3. Ejecuta tests.
-4. Copia el codigo a Lightsail por SSH con `rsync`.
-5. No sobrescribe `.env`.
-6. En Lightsail ejecuta `npm ci`, `npm run build`, `npm prune --omit=dev`.
+4. Prepara dependencias de produccion en GitHub Actions.
+5. Copia el codigo, `dist` y `node_modules` de produccion a Lightsail con `rsync`.
+6. No sobrescribe `.env`.
 7. Reinicia `facturpro-api-staging` con PM2.
+
+La instancia no ejecuta `npm ci` ni `npm run build` durante el deploy. Eso evita
+que Lightsail se quede sin memoria o corte la conexion SSH en planes pequenos.
 
 Antes del primer deploy, la instancia debe tener instalado:
 
