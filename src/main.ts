@@ -32,6 +32,15 @@ async function bootstrap() {
     .setTitle('FactuPRO REST API')
     .setDescription('FactuPRO new version of backend')
     .setVersion('2.0')
+    .addApiKey(
+      {
+        type: 'apiKey',
+        name: 'api-key',
+        in: 'header',
+        description: 'API key configured in the API_KEY environment variable',
+      },
+      'api-key',
+    )
     .build();
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);

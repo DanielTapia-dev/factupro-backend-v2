@@ -121,6 +121,26 @@ yarn db:up
 yarn migrations
 ```
 
+## Autenticacion
+
+Los endpoints de `ciudadano` requieren una API key. El valor debe coincidir con
+la variable `API_KEY` del `.env`.
+
+Para consumir la API desde un cliente HTTP:
+
+```
+api-key: valor-de-API_KEY
+```
+
+Tambien se acepta:
+
+```
+x-api-key: valor-de-API_KEY
+```
+
+En Swagger, abrir `/api/v1/docs`, presionar `Authorize`, pegar el valor de
+`API_KEY` y ejecutar las consultas.
+
 ## Produccion en AWS
 
 Para AWS, el flujo recomendado cambia respecto al entorno local:
