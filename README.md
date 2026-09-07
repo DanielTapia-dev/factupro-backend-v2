@@ -39,9 +39,13 @@ Variables GitHub no secretas requeridas, ya previstas en Fase 5:
 
 Al fallar el healthcheck, el documento restaura la imagen, Compose y configuración secreta de la versión anterior, y devuelve un fallo de despliegue. Para comprobarlo, ejecutar manualmente el workflow con `rollback_test=true`: primero despliega el commit saludable y luego una imagen de prueba que devuelve 503. El workflow exige evidencia de la restauración de ese mismo SHA. Nunca usar esta fixture como versión normal.
 
-## Acceso temporal
+## Acceso HTTPS y administración
 
-Por decisión del propietario, DNS y HTTPS están pendientes. El puerto 3001 solo es accesible por loopback en la EC2; usar un túnel administrativo SSO:
+Endpoint: **https://identidades.innobyte-it.tech**. El propietario administra el registro A en Namecheap hacia la Elastic IP de la plataforma. Nginx termina TLS y redirige HTTP a HTTPS; el contenedor mantiene únicamente el binding loopback 3001. Infraestructura administra el certificado con Certbot/webroot, renovación automática y recarga de Nginx.
+
+Comprobar salud: `curl --fail https://identidades.innobyte-it.tech/api/v1/health`. Las consultas de cédula/RUC siguen requiriendo el header api-key; el healthcheck no comprueba proveedores externos. La política CORS conserva los clientes existentes hasta autorizar su integración.
+
+Para administración también puede usarse el túnel SSO:
 
 ```bash
 aws sso login --profile factupro-admin
@@ -52,4 +56,4 @@ aws ssm start-session --target INSTANCE_ID --profile factupro-admin --region us-
 
 En otra terminal: `curl --fail http://127.0.0.1:3001/api/v1/health`. Usar el instance ID exportado por factupro-infrastructure. No abrir puertos públicos adicionales.
 
-La aceptación AWS/GitHub y las limitaciones de Fase 6 se registran en `factupro-infrastructure/docs/PHASE6.md`; el código preparado no implica que el despliegue ya haya sido ejecutado. No modifica Heroku ni sus datos.
+La aplicación ya está desplegada en AWS mediante OIDC/SSM, con rollback probado. La evidencia, configuración HTTPS y limitaciones de Fase 6 se registran en `factupro-infrastructure/docs/PHASE6.md`. Las pruebas de proveedores externos con datos reales y la integración de clientes son actividades separadas.
