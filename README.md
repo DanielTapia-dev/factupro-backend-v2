@@ -4,7 +4,7 @@ API NestJS para consultar cédula y RUC mediante proveedores HTTP externos. **No
 
 ## Desarrollo
 
-Usar Node 24.18.0 (`nvm use`) y npm con `package-lock.json`:
+Usar Node 24.20.0 (`nvm use`) y npm con `package-lock.json`:
 
 ```bash
 npm ci
@@ -25,7 +25,7 @@ npm run build
 
 ## Imagen y despliegue AWS
 
-La imagen usa Node 24.18.0 Alpine fijado por digest, sin los paquetes Perl de la base Debian anterior, usuario 1000, build ARM64 y una lista explícita de archivos permitidos. El Compose de desarrollo publica únicamente `127.0.0.1:3001:3000`. En AWS, infraestructura administra un Compose separado con filesystem de solo lectura, 400 MiB, 0.5 CPU, límites de procesos y rotación de logs.
+La imagen usa Node 24.20.0 Alpine fijado por digest, con libssl3/libcrypto3 de Alpine ≥3.5.8-r0 y sin los paquetes Perl de la base Debian anterior, usuario 1000, build ARM64 y una lista explícita de archivos permitidos. El Compose de desarrollo publica únicamente `127.0.0.1:3001:3000`. En AWS, infraestructura administra un Compose separado con filesystem de solo lectura, 400 MiB, 0.5 CPU, límites de procesos y rotación de logs.
 
 `.github/workflows/aws-deploy.yml` valida PR sin credenciales AWS. Un push a main o una ejecución manual desde main valida, construye y prueba en un runner ARM64; después usa OIDC para publicar en `factupro/identity-backend` y ejecutar el documento fijo `factupro-platform-production-deploy-identity`. Antes del despliegue se exige un escaneo ECR completado sin hallazgos CRITICAL. Este escaneo básico no sustituye una auditoría de dependencias de aplicación. Los tags son el SHA completo e inmutables. Una repetición conserva la imagen previamente publicada para ese commit.
 

@@ -1,4 +1,8 @@
-FROM node:24.18.0-alpine@sha256:a0b9bf06e4e6193cf7a0f58816cc935ff8c2a908f81e6f1a95432d679c54fbfd AS build
+FROM node:24.20.0-alpine@sha256:e67514e5d0f6c46656005e1b693b2ec9d52e80b641307de684d4a015ba7a4eaf AS base
+# Require the Alpine security fixes; fail the build if unavailable.
+RUN apk add --no-cache 'libcrypto3>=3.5.8-r0' 'libssl3>=3.5.8-r0'
+
+FROM base AS build
 WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
@@ -6,7 +10,7 @@ COPY tsconfig.json tsconfig.build.json nest-cli.json ./
 COPY src ./src
 RUN npm run build && npm prune --omit=dev --no-audit --no-fund
 
-FROM node:24.18.0-alpine@sha256:a0b9bf06e4e6193cf7a0f58816cc935ff8c2a908f81e6f1a95432d679c54fbfd AS runtime
+FROM base AS runtime
 WORKDIR /app
 ENV NODE_ENV=production PORT=3000 NODE_OPTIONS=--max-old-space-size=320
 COPY --from=build /app/node_modules ./node_modules
