@@ -1,6 +1,6 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { CiudadanoService } from './ciudadano.service';
-import { ApiKeyGuard } from 'src/guards/api-key/api-key.guard';
+import { ApiKeyGuard } from '../guards/api-key/api-key.guard';
 
 @Controller('ciudadano')
 @UseGuards(ApiKeyGuard)
