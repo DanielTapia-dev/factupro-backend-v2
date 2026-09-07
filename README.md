@@ -25,9 +25,9 @@ npm run build
 
 ## Imagen y despliegue AWS
 
-La imagen usa Node 24.18.0 fijado por digest, usuario 1000, build ARM64 y una lista explícita de archivos permitidos. El Compose de desarrollo publica únicamente `127.0.0.1:3001:3000`. En AWS, infraestructura administra un Compose separado con filesystem de solo lectura, 400 MiB, 0.5 CPU, límites de procesos y rotación de logs.
+La imagen usa Node 24.18.0 Alpine fijado por digest, sin los paquetes Perl de la base Debian anterior, usuario 1000, build ARM64 y una lista explícita de archivos permitidos. El Compose de desarrollo publica únicamente `127.0.0.1:3001:3000`. En AWS, infraestructura administra un Compose separado con filesystem de solo lectura, 400 MiB, 0.5 CPU, límites de procesos y rotación de logs.
 
-`.github/workflows/aws-deploy.yml` valida PR sin credenciales AWS. Un push a main o una ejecución manual desde main valida, construye y prueba en un runner ARM64; después usa OIDC para publicar en `factupro/identity-backend` y ejecutar el documento fijo `factupro-platform-production-deploy-identity`. Los tags son el SHA completo e inmutables. Una repetición conserva la imagen previamente publicada para ese commit.
+`.github/workflows/aws-deploy.yml` valida PR sin credenciales AWS. Un push a main o una ejecución manual desde main valida, construye y prueba en un runner ARM64; después usa OIDC para publicar en `factupro/identity-backend` y ejecutar el documento fijo `factupro-platform-production-deploy-identity`. Antes del despliegue se exige un escaneo ECR completado sin hallazgos CRITICAL. Este escaneo básico no sustituye una auditoría de dependencias de aplicación. Los tags son el SHA completo e inmutables. Una repetición conserva la imagen previamente publicada para ese commit.
 
 El host descarga exclusivamente `/factupro/production/identity-backend/API_KEY` desde SSM Standard SecureString. El workflow no recibe el secreto, acceso a PostgreSQL, shell arbitrario ni credenciales permanentes. No cargar los antiguos parámetros de base de datos de identity-backend.
 
