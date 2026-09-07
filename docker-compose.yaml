@@ -1,32 +1,16 @@
-version: '3.9'
-
+# Local development only. AWS uses the compose managed by infrastructure.
 services:
-  db:
-    image: postgres:14.3
-    container_name: factuPro
-    restart: always
-    ports:
-      - '5432:5432'
-    environment:
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_DB: ${DB_NAME}
-    volumes:
-      - ./postgres:/var/lib/postgresql/data
-
   api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: facturpro-api
+    build: .
     restart: unless-stopped
-    env_file:
-      - .env
     environment:
-      # Asegura que la app use el servicio "db" del compose
-      DB_HOST: db
-      DB_PORT: 5432
+      API_KEY: ${API_KEY:?Set API_KEY locally}
     ports:
-      - '3000:3000'
-    depends_on:
-      - db
+      - '127.0.0.1:3001:3000'
+    mem_limit: 400m
+    cpus: 0.5
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    cap_drop: [ALL]
+    security_opt: ['no-new-privileges:true']

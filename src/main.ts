@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableShutdownHooks();
   const logger = new Logger('Bootstrap');
 
   // Todas las rutas bajo /api/v1/*
@@ -38,4 +39,7 @@ async function bootstrap() {
   await app.listen(port, '0.0.0.0');
   logger.log(`API on http://0.0.0.0:${port}/api/v1`);
 }
-bootstrap();
+void bootstrap().catch(() => {
+  process.stderr.write('Application startup failed; check configuration\n');
+  process.exitCode = 1;
+});
